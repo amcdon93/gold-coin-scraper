@@ -2,13 +2,9 @@ services:
   - type: web
     name: gold-coin-scraper
     env: node
-    buildCommand: npm install
+    buildCommand: npm install && npx playwright install chromium
     startCommand: npm start
     plan: free
     envVars:
       - key: NODE_ENV
-        value: production
-      - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
-        value: "0"
-      - key: PLAYWRIGHT_BROWSERS_PATH
-        value: "/opt/render/.cache/ms-playwright" 
+        value: production 

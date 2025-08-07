@@ -19,10 +19,12 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
   console.log(`📄 Scanning page for "Buy" buttons: ${baseUrl}`);
   
   try {
+    console.log('🔧 Launching browser...');
     const browser = await chromium.launch({ 
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
     });
+    console.log('✅ Browser launched successfully');
     
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({
