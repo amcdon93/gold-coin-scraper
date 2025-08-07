@@ -21,7 +21,7 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
   try {
     const browser = await chromium.launch({ 
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
     });
     
     const page = await browser.newPage();
@@ -175,7 +175,7 @@ async function scrapeBullionByPostOptimized() {
     // Create a shared browser instance for better performance
     const browser = await chromium.launch({ 
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
     });
     
     // Process products in parallel batches of 5

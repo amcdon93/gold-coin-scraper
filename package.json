@@ -40,7 +40,7 @@
     "test:db": "node src/test-database.js",
     "db:init": "node src/database/init.js",
     "db:migrate": "node src/database/migrate.js",
-    "postinstall": "npx playwright install chromium"
+    "postinstall": "npx playwright install chromium --with-deps"
   },
   "dependencies": {
     "playwright": "^1.40.0",

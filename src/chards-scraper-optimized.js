@@ -219,7 +219,7 @@ async function scrapeChardsOptimized() {
     // Create a shared browser instance for better performance
     const browser = await chromium.launch({ 
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
     });
     
     // Process products in parallel batches of 10
