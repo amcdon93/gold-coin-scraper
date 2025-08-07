@@ -36,10 +36,31 @@ async function getProductUrlsFromPageParallel(baseUrl, pageNumber = 1) {
   console.log(`📄 Scanning page ${pageNumber} for in-stock products...`);
   
   try {
-    const browser = await chromium.launch({ 
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    console.log('🔧 Launching browser...');
+    let browser;
+    try {
+      // Try Firefox first (often more reliable on servers)
+      browser = await firefox.launch({ 
+        headless: true
+      });
+      console.log('✅ Firefox browser launched successfully');
+    } catch (firefoxError) {
+      console.log('⚠️ Firefox launch failed, trying Chromium...');
+      try {
+        browser = await chromium.launch({ 
+          headless: true,
+          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+        });
+        console.log('✅ Chromium browser launched successfully');
+      } catch (chromiumError) {
+        console.log('⚠️ Chromium launch failed, trying minimal Chromium...');
+        browser = await chromium.launch({ 
+          headless: true,
+          args: ['--no-sandbox']
+        });
+        console.log('✅ Minimal Chromium browser launched successfully');
+      }
+    }
     
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({

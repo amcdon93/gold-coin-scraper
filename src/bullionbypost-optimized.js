@@ -55,6 +55,20 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
       timeout: 15000 
     });
     
+    // Handle cookie consent banner
+    try {
+      console.log('🍪 Checking for cookie consent banner...');
+      const acceptButton = await page.waitForSelector('#accept_all', { timeout: 5000 });
+      if (acceptButton) {
+        console.log('🍪 Found cookie banner, clicking "Accept All"...');
+        await acceptButton.click();
+        await page.waitForTimeout(2000); // Wait for banner to disappear
+        console.log('✅ Cookie consent accepted');
+      }
+    } catch (cookieError) {
+      console.log('ℹ️ No cookie banner found or already accepted');
+    }
+    
     const buyButtons = await page.evaluate(() => {
       const buttons = [];
       const buyLinks = document.querySelectorAll('a.btn.btn-success.btn-block.product-link');
@@ -97,6 +111,17 @@ async function scrapeProductPageOptimized(productUrl, productInfo, browser) {
       waitUntil: 'domcontentloaded',
       timeout: 15000 
     });
+    
+    // Handle cookie consent banner
+    try {
+      const acceptButton = await page.waitForSelector('#accept_all', { timeout: 3000 });
+      if (acceptButton) {
+        await acceptButton.click();
+        await page.waitForTimeout(1000);
+      }
+    } catch (cookieError) {
+      // Cookie banner not found, continue
+    }
     
     await page.waitForTimeout(1000);
     
