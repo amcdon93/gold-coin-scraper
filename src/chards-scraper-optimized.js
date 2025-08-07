@@ -39,26 +39,36 @@ async function getProductUrlsFromPageParallel(baseUrl, pageNumber = 1) {
     console.log('🔧 Launching browser...');
     let browser;
     try {
-      // Try Firefox first (often more reliable on servers)
-      browser = await firefox.launch({ 
-        headless: true
+      // Try using system Chrome/Chromium
+      browser = await chromium.launch({ 
+        headless: true,
+        executablePath: '/usr/bin/google-chrome-stable',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
       });
-      console.log('✅ Firefox browser launched successfully');
-    } catch (firefoxError) {
-      console.log('⚠️ Firefox launch failed, trying Chromium...');
+      console.log('✅ System Chrome browser launched successfully');
+    } catch (chromeError) {
+      console.log('⚠️ System Chrome failed, trying Firefox...');
       try {
-        browser = await chromium.launch({ 
+        browser = await firefox.launch({ 
           headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+          executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ Chromium browser launched successfully');
-      } catch (chromiumError) {
-        console.log('⚠️ Chromium launch failed, trying minimal Chromium...');
-        browser = await chromium.launch({ 
-          headless: true,
-          args: ['--no-sandbox']
-        });
-        console.log('✅ Minimal Chromium browser launched successfully');
+        console.log('✅ System Firefox browser launched successfully');
+      } catch (firefoxError) {
+        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
+        try {
+          browser = await firefox.launch({ 
+            headless: true
+          });
+          console.log('✅ Playwright Firefox browser launched successfully');
+        } catch (playwrightFirefoxError) {
+          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
+          browser = await chromium.launch({ 
+            headless: true,
+            args: ['--no-sandbox']
+          });
+          console.log('✅ Minimal Chromium browser launched successfully');
+        }
       }
     }
     
@@ -240,26 +250,36 @@ async function scrapeChardsOptimized() {
     // Create a shared browser instance for better performance
     let browser;
     try {
-      // Try Firefox first (often more reliable on servers)
-      browser = await firefox.launch({ 
-        headless: true
+      // Try using system Chrome/Chromium
+      browser = await chromium.launch({ 
+        headless: true,
+        executablePath: '/usr/bin/google-chrome-stable',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
       });
-      console.log('✅ Firefox browser launched successfully');
-    } catch (firefoxError) {
-      console.log('⚠️ Firefox launch failed, trying Chromium...');
+      console.log('✅ System Chrome browser launched successfully');
+    } catch (chromeError) {
+      console.log('⚠️ System Chrome failed, trying Firefox...');
       try {
-        browser = await chromium.launch({ 
+        browser = await firefox.launch({ 
           headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+          executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ Chromium browser launched successfully');
-      } catch (chromiumError) {
-        console.log('⚠️ Chromium launch failed, trying minimal Chromium...');
-        browser = await chromium.launch({ 
-          headless: true,
-          args: ['--no-sandbox']
-        });
-        console.log('✅ Minimal Chromium browser launched successfully');
+        console.log('✅ System Firefox browser launched successfully');
+      } catch (firefoxError) {
+        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
+        try {
+          browser = await firefox.launch({ 
+            headless: true
+          });
+          console.log('✅ Playwright Firefox browser launched successfully');
+        } catch (playwrightFirefoxError) {
+          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
+          browser = await chromium.launch({ 
+            headless: true,
+            args: ['--no-sandbox']
+          });
+          console.log('✅ Minimal Chromium browser launched successfully');
+        }
       }
     }
     
