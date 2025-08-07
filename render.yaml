@@ -2,7 +2,7 @@ services:
   - type: web
     name: gold-coin-scraper
     env: node
-    buildCommand: npm install && npx playwright install
+    buildCommand: npm install && npx playwright install && npx playwright install firefox
     startCommand: npm start
     plan: free
     envVars:

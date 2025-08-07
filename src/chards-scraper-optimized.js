@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium, firefox } from 'playwright';
 
 /**
  * Optimized Chards Gold Sovereign Scraper (Testing Version)
@@ -217,10 +217,30 @@ async function scrapeChardsOptimized() {
     console.log(`📊 Will scrape ${productsToScrape.length} products in parallel batches`);
     
     // Create a shared browser instance for better performance
-    const browser = await chromium.launch({ 
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-web-security', '--disable-features=VizDisplayCompositor']
-    });
+    let browser;
+    try {
+      // Try Firefox first (often more reliable on servers)
+      browser = await firefox.launch({ 
+        headless: true
+      });
+      console.log('✅ Firefox browser launched successfully');
+    } catch (firefoxError) {
+      console.log('⚠️ Firefox launch failed, trying Chromium...');
+      try {
+        browser = await chromium.launch({ 
+          headless: true,
+          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+        });
+        console.log('✅ Chromium browser launched successfully');
+      } catch (chromiumError) {
+        console.log('⚠️ Chromium launch failed, trying minimal Chromium...');
+        browser = await chromium.launch({ 
+          headless: true,
+          args: ['--no-sandbox']
+        });
+        console.log('✅ Minimal Chromium browser launched successfully');
+      }
+    }
     
     // Process products in parallel batches of 10
     const productBatchSize = 10;
