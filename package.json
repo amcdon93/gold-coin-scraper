@@ -1,0 +1,58 @@
+{
+  "name": "gold-coin-scraper",
+  "version": "1.0.0",
+  "description": "A Playwright-based scraper for gold coin data from various vendors",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "codegen": "npx playwright codegen",
+    "codegen-anti-detection": "node src/codegen-anti-detection.js",
+    "codegen-simple": "node src/codegen-simple.js",
+    "codegen-manual": "node src/codegen-manual.js",
+    "codegen-working": "node src/codegen-working.js",
+    "codegen-cloudflare": "node src/codegen-cloudflare-bypass.js",
+    "codegen-system-chrome": "node src/codegen-system-chrome.js",
+    "codegen-stealth": "node src/codegen-stealth.js",
+    "codegen-real-browser": "node src/codegen-real-browser.js",
+    "codegen-pre-auth": "node src/codegen-pre-auth.js",
+    "codegen-user-profile": "node src/codegen-user-profile.js",
+    "codegen-manual-process": "node src/codegen-manual-process.js",
+    "railway-bypass": "node src/railway-cloudflare-bypass.js",
+    "railway-scraper": "node src/railway-scraper-template.js",
+    "railway-test": "node src/railway-test-simple.js",
+    "railway-gold": "node src/railway-gold-scraper.js",
+    "railway-simple": "node src/railway-simple-gold.js",
+    "bullionbypost": "node src/bullionbypost-scraper.js",
+    "bullionbypost-simple": "node src/bullionbypost-simple.js",
+    "bullionbypost-detailed": "node src/bullionbypost-detailed.js",
+    "bullionbypost-clean": "node src/bullionbypost-clean.js",
+    "bullionbypost-timeout": "node src/bullionbypost-timeout.js",
+    "bullionbypost-two-step": "node src/bullionbypost-two-step.js",
+    "bullionbypost-refined": "node src/bullionbypost-refined.js",
+    "bullionbypost-custom": "node src/bullionbypost-custom.js",
+    "bullionbypost-optimized": "node src/bullionbypost-optimized.js",
+    "chards": "node src/chards-scraper.js",
+    "chards-optimized": "node src/chards-scraper-optimized.js",
+    "install-browsers": "npx playwright install chromium",
+    "test": "node src/test.js",
+    "test:db": "node src/test-database.js",
+    "db:init": "node src/database/init.js",
+    "db:migrate": "node src/database/migrate.js",
+    "postinstall": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
