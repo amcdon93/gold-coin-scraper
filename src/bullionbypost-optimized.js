@@ -20,11 +20,21 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
   
   try {
     console.log('🔧 Launching browser...');
-    const browser = await chromium.launch({ 
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
-    });
-    console.log('✅ Browser launched successfully');
+    let browser;
+    try {
+      browser = await chromium.launch({ 
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-web-security', '--disable-features=VizDisplayCompositor']
+      });
+      console.log('✅ Browser launched successfully');
+    } catch (browserError) {
+      console.log('⚠️ Primary browser launch failed, trying alternative approach...');
+      browser = await chromium.launch({ 
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      console.log('✅ Alternative browser launch successful');
+    }
     
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({
@@ -177,7 +187,7 @@ async function scrapeBullionByPostOptimized() {
     // Create a shared browser instance for better performance
     const browser = await chromium.launch({ 
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer', '--disable-web-security', '--disable-features=VizDisplayCompositor']
     });
     
     // Process products in parallel batches of 5
