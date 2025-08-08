@@ -1,4 +1,9 @@
-import { chromium, firefox } from 'playwright';
+import { chromium, firefox } from 'playwright-extra';
+import stealth from 'puppeteer-extra-plugin-stealth';
+
+// Apply stealth plugin to both browsers
+chromium.use(stealth());
+firefox.use(stealth());
 
 /**
  * Optimized Chards Gold Sovereign Scraper (Testing Version)
@@ -36,51 +41,72 @@ async function getProductUrlsFromPageParallel(baseUrl, pageNumber = 1) {
   console.log(`📄 Scanning page ${pageNumber} for in-stock products...`);
   
   try {
-    console.log('🔧 Launching browser...');
+    console.log('🔧 Launching stealth browser...');
     let browser;
     try {
-      // Try using system Chrome/Chromium
+      // Try using stealth Chrome with system executable
       browser = await chromium.launch({ 
         headless: true,
         executablePath: '/usr/bin/google-chrome-stable',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
+        args: [
+          '--no-sandbox', 
+          '--disable-setuid-sandbox', 
+          '--disable-dev-shm-usage', 
+          '--disable-gpu', 
+          '--disable-software-rasterizer',
+          '--disable-blink-features=AutomationControlled',
+          '--disable-web-security',
+          '--disable-features=VizDisplayCompositor'
+        ]
       });
-      console.log('✅ System Chrome browser launched successfully');
+      console.log('✅ Stealth Chrome browser launched successfully');
     } catch (chromeError) {
-      console.log('⚠️ System Chrome failed, trying Firefox...');
+      console.log('⚠️ Stealth Chrome failed, trying Firefox...');
       try {
         browser = await firefox.launch({ 
           headless: true,
           executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ System Firefox browser launched successfully');
+        console.log('✅ Stealth Firefox browser launched successfully');
       } catch (firefoxError) {
-        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
+        console.log('⚠️ Stealth Firefox failed, trying Playwright Firefox...');
         try {
           browser = await firefox.launch({ 
             headless: true
           });
-          console.log('✅ Playwright Firefox browser launched successfully');
+          console.log('✅ Stealth Playwright Firefox browser launched successfully');
         } catch (playwrightFirefoxError) {
-          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
+          console.log('⚠️ Stealth Firefox failed, trying minimal Chromium...');
           browser = await chromium.launch({ 
             headless: true,
-            args: ['--no-sandbox']
+            args: ['--no-sandbox', '--disable-blink-features=AutomationControlled']
           });
-          console.log('✅ Minimal Chromium browser launched successfully');
+          console.log('✅ Minimal Stealth Chromium browser launched successfully');
         }
       }
     }
     
     const page = await browser.newPage();
+    
+    // Stealth configuration to appear more human-like
     await page.setExtraHTTPHeaders({
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1'
     });
     
+    // Set viewport to common desktop resolution
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    
+    // Add random delays to appear more human
     await page.goto(baseUrl, { 
       waitUntil: 'domcontentloaded',
       timeout: 15000 
     });
+    await page.waitForTimeout(1000 + Math.random() * 2000); // Random delay 1-3 seconds
     
     await handleCookieConsent(page);
     await page.waitForTimeout(1000);
@@ -121,14 +147,26 @@ async function getProductUrlsFromPageParallel(baseUrl, pageNumber = 1) {
 async function scrapeProductPageChardsOptimized(productUrl, productInfo, browser) {
   try {
     const page = await browser.newPage();
+    
+    // Stealth configuration to appear more human-like
     await page.setExtraHTTPHeaders({
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1'
     });
     
+    // Set viewport to common desktop resolution
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    
+    // Add random delays to appear more human
     await page.goto(productUrl, { 
       waitUntil: 'domcontentloaded',
       timeout: 15000 
     });
+    await page.waitForTimeout(1000 + Math.random() * 2000); // Random delay 1-3 seconds
     
     await handleCookieConsent(page);
     await page.waitForTimeout(1000);
@@ -247,38 +285,47 @@ async function scrapeChardsOptimized() {
     const productsToScrape = allProductUrls;
     console.log(`📊 Will scrape ${productsToScrape.length} products in parallel batches`);
     
-    // Create a shared browser instance for better performance
+    // Create a shared stealth browser instance for better performance
     let browser;
     try {
-      // Try using system Chrome/Chromium
+      // Try using stealth Chrome with system executable
       browser = await chromium.launch({ 
         headless: true,
         executablePath: '/usr/bin/google-chrome-stable',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-software-rasterizer']
+        args: [
+          '--no-sandbox', 
+          '--disable-setuid-sandbox', 
+          '--disable-dev-shm-usage', 
+          '--disable-gpu', 
+          '--disable-software-rasterizer',
+          '--disable-blink-features=AutomationControlled',
+          '--disable-web-security',
+          '--disable-features=VizDisplayCompositor'
+        ]
       });
-      console.log('✅ System Chrome browser launched successfully');
+      console.log('✅ Stealth Chrome browser launched successfully');
     } catch (chromeError) {
-      console.log('⚠️ System Chrome failed, trying Firefox...');
+      console.log('⚠️ Stealth Chrome failed, trying Firefox...');
       try {
         browser = await firefox.launch({ 
           headless: true,
           executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ System Firefox browser launched successfully');
+        console.log('✅ Stealth Firefox browser launched successfully');
       } catch (firefoxError) {
-        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
+        console.log('⚠️ Stealth Firefox failed, trying Playwright Firefox...');
         try {
           browser = await firefox.launch({ 
             headless: true
           });
-          console.log('✅ Playwright Firefox browser launched successfully');
+          console.log('✅ Stealth Playwright Firefox browser launched successfully');
         } catch (playwrightFirefoxError) {
-          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
+          console.log('⚠️ Stealth Firefox failed, trying minimal Chromium...');
           browser = await chromium.launch({ 
             headless: true,
-            args: ['--no-sandbox']
+            args: ['--no-sandbox', '--disable-blink-features=AutomationControlled']
           });
-          console.log('✅ Minimal Chromium browser launched successfully');
+          console.log('✅ Minimal Stealth Chromium browser launched successfully');
         }
       }
     }
