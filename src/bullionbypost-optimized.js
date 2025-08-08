@@ -1,9 +1,4 @@
-import { chromium, firefox } from 'playwright-extra';
-import stealth from 'puppeteer-extra-plugin-stealth';
-
-// Apply stealth plugin to both browsers
-chromium.use(stealth());
-firefox.use(stealth());
+import { chromium, firefox } from 'playwright';
 
 /**
  * Optimized BullionByPost Custom Scraper (Testing Version)
@@ -24,10 +19,10 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
   console.log(`📄 Scanning page for "Buy" buttons: ${baseUrl}`);
   
   try {
-    console.log('🔧 Launching stealth browser...');
+    console.log('🔧 Launching browser...');
     let browser;
     try {
-      // Try using stealth Chrome with system executable
+      // Try using system Chrome with enhanced args
       browser = await chromium.launch({ 
         headless: true,
         executablePath: '/usr/bin/google-chrome-stable',
@@ -39,32 +34,39 @@ async function getProductUrlsFromPageOptimized(baseUrl) {
           '--disable-software-rasterizer',
           '--disable-blink-features=AutomationControlled',
           '--disable-web-security',
-          '--disable-features=VizDisplayCompositor'
+          '--disable-features=VizDisplayCompositor',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--disable-field-trial-config',
+          '--disable-ipc-flooding-protection'
         ]
       });
-      console.log('✅ Stealth Chrome browser launched successfully');
+      console.log('✅ System Chrome browser launched successfully');
     } catch (chromeError) {
-      console.log('⚠️ Stealth Chrome failed, trying Firefox...');
+      console.log('⚠️ System Chrome failed, trying Firefox...');
       try {
         browser = await firefox.launch({ 
           headless: true,
           executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ Stealth Firefox browser launched successfully');
+        console.log('✅ System Firefox browser launched successfully');
       } catch (firefoxError) {
-        console.log('⚠️ Stealth Firefox failed, trying Playwright Firefox...');
+        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
         try {
           browser = await firefox.launch({ 
             headless: true
           });
-          console.log('✅ Stealth Playwright Firefox browser launched successfully');
+          console.log('✅ Playwright Firefox browser launched successfully');
         } catch (playwrightFirefoxError) {
-          console.log('⚠️ Stealth Firefox failed, trying minimal Chromium...');
+          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
           browser = await chromium.launch({ 
             headless: true,
             args: ['--no-sandbox', '--disable-blink-features=AutomationControlled']
           });
-          console.log('✅ Minimal Stealth Chromium browser launched successfully');
+          console.log('✅ Minimal Chromium browser launched successfully');
         }
       }
     }
@@ -266,10 +268,10 @@ async function scrapeBullionByPostOptimized() {
     const productsToScrape = allProductUrls;
     console.log(`📊 Will scrape ${productsToScrape.length} products in parallel batches`);
     
-    // Create a shared stealth browser instance for better performance
+    // Create a shared browser instance for better performance
     let browser;
     try {
-      // Try using stealth Chrome with system executable
+      // Try using system Chrome with enhanced args
       browser = await chromium.launch({ 
         headless: true,
         executablePath: '/usr/bin/google-chrome-stable',
@@ -281,32 +283,39 @@ async function scrapeBullionByPostOptimized() {
           '--disable-software-rasterizer',
           '--disable-blink-features=AutomationControlled',
           '--disable-web-security',
-          '--disable-features=VizDisplayCompositor'
+          '--disable-features=VizDisplayCompositor',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--disable-field-trial-config',
+          '--disable-ipc-flooding-protection'
         ]
       });
-      console.log('✅ Stealth Chrome browser launched successfully');
+      console.log('✅ System Chrome browser launched successfully');
     } catch (chromeError) {
-      console.log('⚠️ Stealth Chrome failed, trying Firefox...');
+      console.log('⚠️ System Chrome failed, trying Firefox...');
       try {
         browser = await firefox.launch({ 
           headless: true,
           executablePath: '/usr/bin/firefox'
         });
-        console.log('✅ Stealth Firefox browser launched successfully');
+        console.log('✅ System Firefox browser launched successfully');
       } catch (firefoxError) {
-        console.log('⚠️ Stealth Firefox failed, trying Playwright Firefox...');
+        console.log('⚠️ System Firefox failed, trying Playwright Firefox...');
         try {
           browser = await firefox.launch({ 
             headless: true
           });
-          console.log('✅ Stealth Playwright Firefox browser launched successfully');
+          console.log('✅ Playwright Firefox browser launched successfully');
         } catch (playwrightFirefoxError) {
-          console.log('⚠️ Stealth Firefox failed, trying minimal Chromium...');
+          console.log('⚠️ Playwright Firefox failed, trying minimal Chromium...');
           browser = await chromium.launch({ 
             headless: true,
             args: ['--no-sandbox', '--disable-blink-features=AutomationControlled']
           });
-          console.log('✅ Minimal Stealth Chromium browser launched successfully');
+          console.log('✅ Minimal Chromium browser launched successfully');
         }
       }
     }
